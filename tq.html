@@ -4,22 +4,25 @@
         <meta charset="utf-8">
         <title>国内天气查询</title>
         <link rel="stylesheet" href="tq.css">
-        <script src='http://cdn.bootcss.com/jquery/3.1.1/jquery.js'></script>
+        <!-- <script src='http://cdn.bootcss.com/jquery/3.1.1/jquery.js'></script> -->
+        <!-- jqueryUI -->
+        <link rel="stylesheet" href="http://apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+        <script src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="http://apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
     </head>
     <body>
         <!-- 查询栏 -->
         <div class="query">
             <label>
                 城市：
-                <input class='input_city_name' type="text" placeholder="请输入城市名称" value="">
+                <input id='tags' class='input_city_name' type="text" placeholder="请输入城市名称" value="">
             </label>
             <button class='button_query' type="button">查询</button>
         </div>
 
         <!-- 展示栏 -->
-        <div class="result">
-
-        </div>
+        <div class="result"></div>
 
         <!-- js -->
         <script src='cityID.js'></script>

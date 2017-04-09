@@ -7,9 +7,10 @@ var insertHtml = function(obj) {
     <div class="result_now">
         <h1 class='result_city_name'>${obj.city}天气查询结果</h1>
         <div class="result_temperature">当前气温：${obj.wendu}</div>
-        <div class="result_aqi">空气质量指数：${obj.aqi}</div>
+        <div class="result_aqi">空气质量指数：${obj.aqi}/${obj.aqiGrade}</div>
         <div class="result_fengli">风力等级：${obj.fl}</div>
         <div class="result_fengxiang">风向：${obj.fx}</div>
+        <div class="result_ganmao">感冒指数：${obj.ganmao}</div>
     </div>
     `
     //插入到页面
@@ -20,10 +21,10 @@ var insertHtml = function(obj) {
 
 // ajax 回调函数 (参数是请求返回的数据)
 var success = function(data) {
-    log('data is',data)
+    //log('data is',data)
     var input = document.querySelector('.input_city_name')
     var value = input.value
-    //判断返回的数据是否正确
+    //判断返回的数据是否正确，并取出数据
     if (data.desc == 'OK') {
         //城市
         var city = data.data.city
@@ -58,6 +59,25 @@ var success = function(data) {
         //风向
         var fx = '无数据'
     }
+    //根据 aqi 判断空气质量等级
+    if (aqi != '无数据') {
+        var aqi = Number(aqi)
+        if (aqi <= 50) {
+            aqiGrade = '优'
+        } else if (aqi>50 && aqi<=100) {
+            aqiGrade = '良'
+        } else if (aqi>100 && aqi<=150) {
+            aqiGrade = '轻度污染'
+        } else if (aqi>150 && aqi<=200) {
+            aqiGrade = '中度污染'
+        } else if (aqi>200 && aqi<=300) {
+            aqiGrade = '重度污染'
+        } else if (aqi > 300) {
+            aqiGrade = '严重污染'
+        }
+    } else {
+        var aqiGrade = '无数据'
+    }
     //生成对象
     var obj = {
         city: city,
@@ -65,6 +85,7 @@ var success = function(data) {
         low: low,
         high: high,
         aqi: aqi,
+        aqiGrade: aqiGrade,
         ganmao: ganmao,
         fl: fl,
         fx: fx,
@@ -103,14 +124,41 @@ var weatherQuery = function() {
 }
 
 //绑定查询按钮点击事件
-var bindQuery = function() {
+var bindQueryButton = function() {
     var query = document.querySelector('.button_query')
     query.addEventListener('click', weatherQuery)
 }
 
-//main
-var main = function() {
-    bindQuery()
+//绑定在 input 按确定键触发查询事件
+var bindQueryKeydown = function() {
+    var input = document.querySelector('.input_city_name')
+    input.addEventListener('keydown', function(event) {
+        if (event.key == 'Enter') {
+            weatherQuery()
+        }
+    })
 }
 
+//所有绑定事件
+var bindAll = function() {
+    bindQueryButton()
+    bindQueryKeydown()
+}
+
+//main
+var main = function() {
+    bindAll()
+}
+
+//输入时的填充提示
+//jqueryUI 的方法
+$(function() {
+    var list = Object.keys(cityList)
+    $("#tags").autocomplete({
+        source: list
+    })
+})
+
+
+//
 main()
