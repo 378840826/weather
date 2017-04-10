@@ -112,15 +112,27 @@ var weatherQuery = function() {
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             alert(textStatus)
             alert(errorThrown)
-            this // 调用本次AJAX请求时传递的options参数
+            this // 本次AJAX请求时传递的options参数
         },
-        //返回数据的格式
+        //返回数据的格式。(此api返回json格式)
         dataType: "json",
         //回调函数 (参数是请求返回的数据)
         success: success,
     }
     //发送 ajax 请求
     $.ajax(options)
+}
+
+//热门城市下拉框选项点击事件
+var bindRm = function() {
+    var rmList = document.querySelector('.rmList')
+    rmList.addEventListener('click', function(event) {
+        var target = event.target
+        var val = target.innerText
+        var input = document.querySelector('.input_city_name')
+        input.value = val
+        weatherQuery()
+    })
 }
 
 //绑定查询按钮点击事件
@@ -143,22 +155,26 @@ var bindQueryKeydown = function() {
 var bindAll = function() {
     bindQueryButton()
     bindQueryKeydown()
+    bindRm()
 }
+
+//输入补全提示
+//jqueryUI 的方法
+var tishi = function() {
+    var list = Object.keys(cityList)
+    $(".tags").autocomplete({
+        source: list
+    })
+}
+
 
 //main
 var main = function() {
     bindAll()
+    tishi()
 }
-
-//输入时的填充提示
-//jqueryUI 的方法
-$(function() {
-    var list = Object.keys(cityList)
-    $("#tags").autocomplete({
-        source: list
-    })
-})
-
-
+$(function () {
+	$("[data-toggle='popover']").popover();
+});
 //
 main()
