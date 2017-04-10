@@ -98,33 +98,40 @@ var success = function(data) {
 var weatherQuery = function() {
     var input = document.querySelector('.input_city_name')
     var value = input.value
-    //从城市列表对象中查找对应的城市 ID，用于请求的 url
-    var cityNum = cityList[value]
-    // 设置 $ajax 参数
-    var options = {
-        //是否异步
-        async: true,
-        //请求方法
-        type: "GET",
-        //请求地址
-        url: "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityNum,
-        //请求错误时调用的函数
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-            alert(textStatus)
-            alert(errorThrown)
-            this // 本次AJAX请求时传递的options参数
-        },
-        //返回数据的格式。(此api返回json格式)
-        dataType: "json",
-        //回调函数 (参数是请求返回的数据)
-        success: success,
+    //查询提交预验证,判断输入是否有误
+    var list = Object.keys(cityList)
+    if (!list.includes(value)) {
+        popupShow()
+    } else {
+        //从城市列表对象中查找对应的城市 ID，用于请求的 url
+        var cityNum = cityList[value]
+        // 设置 $ajax 参数
+        var options = {
+            //是否异步
+            async: true,
+            //请求方法
+            type: "GET",
+            //请求地址
+            url: "http://wthrcdn.etouch.cn/weather_mini?citykey=" + cityNum,
+            //请求错误时调用的函数
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                alert(textStatus)
+                alert(errorThrown)
+                this // 本次AJAX请求时传递的options参数
+            },
+            //返回数据的格式。(此api返回json格式)
+            dataType: "json",
+            //回调函数 (参数是请求返回的数据)
+            success: success,
+        }
+        //发送 ajax 请求
+        $.ajax(options)
     }
-    //发送 ajax 请求
-    $.ajax(options)
 }
 
-//热门城市下拉框选项点击事件
+//绑定热门城市下拉框选项点击自动查询事件
 var bindRm = function() {
+    //把点击的项的值提交到 input，再调用查询函数
     var rmList = document.querySelector('.rmList')
     rmList.addEventListener('click', function(event) {
         var target = event.target
@@ -167,14 +174,36 @@ var tishi = function() {
     })
 }
 
+//激活弹窗提示功能
+var popup = function() {
+    $('#temp').popover({
+        //触发方式为手动
+        trigger:'manual',
+        //设置 弹出框 的标题
+        title:"输入错误",
+    })
+}
+
+//隐藏提示
+var popupHide = function() {
+    $('#temp').popover('hide')
+}
+
+//显示提示
+var popupShow = function() {
+    //常用方法：
+    $('#temp').popover('show')
+    //$('#temp').popover('hide')
+    //$('#temp').popover('destroy')
+    var t1 = window.setTimeout(popupHide, 3000)
+}
 
 //main
 var main = function() {
     bindAll()
     tishi()
+    popup()
 }
-$(function () {
-	$("[data-toggle='popover']").popover();
-});
+
 //
 main()
